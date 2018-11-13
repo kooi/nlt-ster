@@ -1,58 +1,88 @@
-<html> 
-<head> 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script> 
-<script src="skulpt.min.js" type="text/javascript"></script> 
-<script src="skulpt-stdlib.js" type="text/javascript"></script> 
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script>
+    <script src="skulpt.min.js" type="text/javascript"></script>
+    <script src="skulpt-stdlib.js" type="text/javascript"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style>
+    html, body {
+      font-family: 'Roboto', sans-serif;
+    }
+    </style>
+  </head>
+  <body>
 
-</head> 
+    <script type="text/javascript">
+    // output functions are configurable.  This one just appends some text
+    // to a pre element.
+    function outf(text) {
+        var mypre = document.getElementById("output");
+        mypre.innerHTML = mypre.innerHTML + text;
+    }
+    function builtinRead(x) {
+        if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+                throw "File not found: '" + x + "'";
+        return Sk.builtinFiles["files"][x];
+    }
 
-<body> 
+    // Here's everything you need to run a python program in skulpt
+    // grab the code from your textarea
+    // get a reference to your pre element for output
+    // configure the output function
+    // call Sk.importMainWithBody()
+    function runit() {
+       var prog = document.getElementById("yourcode").value;
+       var mypre = document.getElementById("output");
+       mypre.innerHTML = '';
+       Sk.pre = "output";
+       Sk.configure({output:outf, read:builtinRead});
+       (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = 'mycanvas';
+       var myPromise = Sk.misceval.asyncToPromise(function() {
+           return Sk.importMainWithBody("<stdin>", false, prog, true);
+       });
+       myPromise.then(function(mod) {
+           console.log('success');
+       },
+           function(err) {
+           console.log(err.toString());
+       });
+    }
+    </script>
 
-<script type="text/javascript"> 
-// output functions are configurable.  This one just appends some text
-// to a pre element.
-function outf(text) { 
-    var mypre = document.getElementById("output"); 
-    mypre.innerHTML = mypre.innerHTML + text; 
-} 
-function builtinRead(x) {
-    if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
-            throw "File not found: '" + x + "'";
-    return Sk.builtinFiles["files"][x];
-}
+<a href="https://github.com/kooi/nlt-ster" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
 
-// Here's everything you need to run a python program in skulpt
-// grab the code from your textarea
-// get a reference to your pre element for output
-// configure the output function
-// call Sk.importMainWithBody()
-function runit() { 
-   var prog = document.getElementById("yourcode").value; 
-   var mypre = document.getElementById("output"); 
-   mypre.innerHTML = ''; 
-   Sk.pre = "output";
-   Sk.configure({output:outf, read:builtinRead}); 
-   (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = 'mycanvas';
-   var myPromise = Sk.misceval.asyncToPromise(function() {
-       return Sk.importMainWithBody("<stdin>", false, prog, true);
-   });
-   myPromise.then(function(mod) {
-       console.log('success');
-   },
-       function(err) {
-       console.log(err.toString());
-   });
-} 
-</script> 
+<h3>Solar System Simulator (3-body, beta)</h3>
 
-<h3>Code</h3> 
+Hieronder staat een stukje code waarmee je een zonnestelsel kunt simuleren.
+Scroll naar beneden tot je het volgende gedeelte ziet (dit zijn de <i>invoerregels</i>):
+<pre>p1   = Planet( 100.0,   0.0,     0.0,  1400.0,       6.0, "blue")
+p2   = Planet(   0.0, 150.0, -1200.0,     0.0,       6.0, "green")
+sun = Planet(    0.0,   0.0,     0.0,    -0.0, 2000000.0, "yellow")</pre>
+
+Planeet <tt>p1</tt> begint hier bijvoorbeeld op positie (100.0, 0.0), heeft een beginsnelheid van (0.0, 1400.0) [dat is dus omhoog], een massa van 6.0 en is blauw.<br>
+
+De simulatie is zo ingesteld dat als de tijd om is er een uitvoer gegeven wordt van de halve lange as (a), de halve korte as (b) en de omlooptijd (T) van de ellipsbaan. Het is overigens wel zo dat T telkens verhoogd wordt als de planeet langs zijn startpositie komt. Als de planeet dus 3x rond geweest is [meer dan 3x, minder dan 4x] moet je dus door 3 delen. Tel dus het aantal keren dat een planeet rondgaat (of maak de simulatie korter).<br>
+
+<h4>Opdracht</h4>
+Varieer met de positie- en snelheids-parameters van de planeet <tt>p1</tt> (niet de massa's!) totdat je tenminste 4 duidelijk  verschillende waarden voor a, b en T gevonden hebt. Je mag hiervoor zowel planeet 1 als planeet 2 gebruiken.<p>
+
+N.B. Als je de simulatie opnieuw start dan wordt de uitvoer weer overschreven dus kopieer de waarden naar een tekstbestand in kladblok samen met de <i>invoerregels</i>.<br>
+
+N.B. Als de planeten niet heel nauwkeurig bewegen (als ze te snel gaan) dan kan het zijn dat er geen uitvoer komt omdat de planeet niet weer op zijn startpositie terechtkwam. Maak in dat geval <tt>dt</tt> kleiner. Vergeet dan overigens niet <tt>tmax</tt> met een evengrote factor te vergroten! (Ca. 10x is meestal prima.)
+Lever je tekstbestand in via moodle.<p>
+
+Als je je waarden gevonden hebt kun je ook kijken wat er gebeurt als je <tt>G</tt> of de massa's van de planeten verandert. Bewaar de invoerregels van de leukste :-)
+
 <form>
-<button type="button" onclick="runit()">Run</button> 
-<textarea id="yourcode" cols="40" rows="10">import turtle
+<textarea id="yourcode" cols="80" rows="15">
+import turtle
 import math
 
 class Planet:
+    margin = 10.0
     def __init__(self, sx, sy, vx, vy, m, color):
+        self.sx0 = sx
+        self.sy0 = sy
         self.sx = sx
         self.sy = sy
         self.vx = vx
@@ -62,14 +92,21 @@ class Planet:
         self.renderer = turtle.Turtle()
         self.renderer.shape("circle")
         self.renderer.penup()
-        # set at correct place
         self.renderer.goto(self.sx, self.sy)
-        # ...
+        ## do once?
         self.renderer.getscreen().bgcolor( 0, 0, .2 )
         self.renderer.pencolor("white")
         self.renderer.pendown()
         self.renderer.radians()
-    
+        # set better
+        self.a = None
+        self.b = None
+        self.maxR = 0
+        self.minR = 1000 # better way to determine?
+        self.t = 0
+        self.T = None
+
+
     def step(self, dt, suns):
         self.ax = 0.0
         self.ay = 0.0
@@ -79,11 +116,28 @@ class Planet:
             angle = self.getForceDirection(s)
             self.ax += a*math.cos(angle)
             self.ay += a*math.sin(angle)
-        
+
         self.vx += self.ax*dt
         self.vy += self.ay*dt
         self.sx += self.vx*dt
         self.sy += self.vy*dt
+        self.t += dt
+
+        # find orbital paramaters, assume first parameter is "sun"
+        dx = self.sx - suns[0].sx
+        dy = self.sy - suns[0].sy
+        r = math.sqrt(dx*dx+dy*dy)
+        # get max distance
+        if r > self.maxR:
+            self.maxR = r
+        if r < self.minR:
+            self.minR = r
+        self.a = (self.maxR + self.minR)/2.0
+        self.c = (self.maxR - self.minR)/2.0
+        self.b = math.sqrt(self.a*self.a - self.c*self.c)
+        if abs(self.sx - self.sx0) < self.margin:
+            if abs(self.sy - self.sy0) < self.margin:
+                self.T = self.t
 
 
     def getForceDirection(self, sun):
@@ -95,38 +149,53 @@ class Planet:
         dy = self.sy - sun.sy
         # return Force on self
         rsq = dx*dx+dy*dy
-#        print (rsq)
         return G * self.mass*sun.mass / rsq
 
     def show(self):
         self.renderer.fillcolor(self.color)
         self.renderer.goto(self.sx, self.sy)
 
-
-
-
+## Hieronder staan de objecten gedefinieerd. Het is telkens een Planet. Dat is
+## niets anders dan een object waarvan waarop de zwaartekracht van alle andere
+## objecten werkt en een postie, snelheid, massa en kleur heeft.
+## Je maakt het aan door gebruik te maken van:
+## Planet( xpos, ypos, xsnel, ysnel, massa, kleur)
+## Hieronder staan er 3 gedefinieerd, een zon en 2 planeten.
 
 p1   = Planet( 100.0,   0.0,     0.0,  1400.0,       6.0, "blue")
 p2   = Planet(   0.0, 150.0, -1200.0,     0.0,       6.0, "green")
 sun = Planet(    0.0,   0.0,     0.0,    -0.0, 2000000.0, "yellow")
 
+## Dit zijn de parameters van de simulatie:
+## G = gravitatieconstante (eigenlijk 6.7E-11 in SI-eenheden)
+## tmax = maximale aantal tijdstappen (dan houdt de simulatie op)
+## dt = stapgrootte per tijdsstap; als de simulatie heel blokkerig wordt kun je
+##      deze kleuner maken maar dan loopt de simulatie langzamer.
+
 G = 100.
-T = 5000
-dt = 0.02
+tmax = 100
+dt = 0.01
 
-
-for t in range(T):
+#t = 0
+for t in range(tmax):
     p1.step(dt, [sun, p2])
     p2.step(dt, [sun, p1])
     sun.step(dt, [p1, p2])
     p1.show()
     p2.show()
-    sun.show()</textarea><br /> 
-</form> 
-<!-- If you want turtle graphics include a canvas -->
-<div id="mycanvas"></div> 
-<pre id="output" ></pre> 
-
-</body> 
-
-</html> 
+    sun.show()
+print("<tt><b>Planeet1:</b><br>a="+str(p1.a) +"<br>b=" + str(p1.b) + "<br>T=" + str(p1.T) + " ("+str(int(p1.T/dt))+" stappen)</tt><p>")
+print("<tt><b>Planeet2:</b><br>a="+str(p2.a) +"<br>b=" + str(p2.b) + "<br>T=" + str(p2.T) + " ("+str(int(p2.T/dt))+" stappen)</tt><p>")
+      </textarea>
+      <br/>
+      <button type="button" onclick="runit()">Run</button><b>&lt;-- Start hiermee de simulatie</b><br/>
+    </form>
+    <!-- If you want turtle graphics include a canvas -->
+    <div style="width: 100%;height:400px;">
+      <div id="mycanvas" style="float:left;" width=400></div>
+      <div id="output"></div>
+      <div class="clear"></div>
+    </div>
+  </div>
+  </body>
+</html>
