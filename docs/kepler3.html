@@ -188,6 +188,10 @@ for t in range(tmax):
     p1.show()
     p2.show()
     sun.show()
+
+for p in [p1, p2]:
+    if p.T == None:
+        p.T = 0
 print("<tt><b>Planeet1:</b><br>a="+str(p1.a) +"<br>b=" + str(p1.b) + "<br>T=" + str(p1.T) + " ("+str(int(p1.T/dt))+" stappen)</tt><p>")
 print("<tt><b>Planeet2:</b><br>a="+str(p2.a) +"<br>b=" + str(p2.b) + "<br>T=" + str(p2.T) + " ("+str(int(p2.T/dt))+" stappen)</tt><p>")
       
